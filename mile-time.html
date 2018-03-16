@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Runner's Mile Time Calculator</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <style type="text/css">
+    body {background: #333;}
+    .form-container {float: left; background: #fff; margin: 25px; padding: 25px;}
+    .form .input-group label {display: inline-block; width: 100px; text-align: right;}
+    .form input {width: 4em; font-size: 1.5em; text-align: center; border: none; border-bottom: solid 1px #999;}
+    .form .btn {background: #222; color: #fff; margin: 25px 0 25px; padding: 8px 15px; border: none;}
+    #pace-result1, #pace-result2 {min-width: 100px; font-size: 2em; color: green;}
+    #error1, #error2 {color: red;}
+    </style>
+  </head>
+  <body>
+
+    <div class="form-container">
+      <h2>Pace</h2>
+      <form class="form form-pace">
+        <div class="input-group">
+          <label for="distance">Distance</label>
+          <input type="number" id="distance" step="0.01" name="distance" value="">
+        </div>
+        <div class="input-group">
+          <label for="time">Time (H:M:S)</label>
+          <input type="number" id="timeHour" name="timeHour" value="" maxLength="2"> :
+          <input type="number" id="timeMin" name="timeMin" value="" maxLength="2" max="59"> :
+          <input type="number" id="timeSec" name="timeSec" value="" maxLength="2" max="59">
+        </div>
+        <button class="btn">Calculate</button>
+        <div class="input-group">
+          <label for="pace-result">Pace:</label>
+          <span id="pace-result1"></span>
+          <span id="error1"></span>
+        </div>
+      </form>
+    </div>
+
+    <div class="form-container">
+      <h2>Time</h2>
+      <form class="form form-time">
+        <div class="input-group">
+          <label for="distance">Distance</label>
+          <input type="number" id="distance" step="0.01" name="distance" value="">
+        </div>
+        <div class="input-group">
+          <label for="time">Pace (M:S)</label>
+          <input type="number" id="timeMin" name="timeMin" value="" maxLength="2" max="59"> :
+          <input type="number" id="timeSec" name="timeSec" value="" maxLength="2" max="59">
+        </div>
+        <button class="btn">Calculate</button>
+        <div class="input-group">
+          <label for="pace-result2">Time:</label>
+          <span id="pace-result2"></span>
+          <span id="error2"></span>
+        </div>
+      </form>
+    </div>
+
+  </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script>
+  function secondsToHMS(s) {
+    // from Stackoverflow
+    var h = Math.floor(s/3600);
+    s -= h*3600;
+    var m = Math.floor(s/60);
+    s -= m*60;
+    return (h > 0 ? h+":" : '') + (m < 10 && h > 0 ? '0'+m : m)+":"+(Math.round(s) < 10 ? '0'+Math.round(s) : Math.round(s));
+  }
+  $(document).ready(function() {
+    $('.form-pace').on('submit', null, function(e) {
+      e.preventDefault();
+      $('#pace-result1').text('');
+      $('#error1').text('');
+      var form = $(this);
+      var distance = form[0][0].value;
+      var timeHour = form[0][1].value||0;
+      var timeMin = form[0][2].value||0;
+      var timeSec = form[0][3].value||0;
+      var seconds = parseInt(timeHour)*3600 + parseInt(timeMin)*60 + parseInt(timeSec);
+      var paceSeconds = seconds / parseFloat(distance);
+      var pace = 'Error: invalid distance or time.';
+      if (distance > 0 && paceSeconds) {
+        pace = secondsToHMS(paceSeconds);
+        $('#pace-result1').text(pace);
+      } else {
+        $('#error1').text(pace);
+      }
+    });
+    $('.form-time').on('submit', null, function(e) {
+      e.preventDefault();
+      $('#pace-result2').text('');
+      $('#error2').text('');
+      var form = $(this);
+      var distance = form[0][0].value;
+      var timeMin = form[0][1].value||0;
+      var timeSec = form[0][2].value||0;
+      var seconds = parseInt(timeMin)*60 + parseInt(timeSec);
+      var paceSeconds = seconds * parseFloat(distance);
+      var pace = 'Error: invalid distance or time.';
+      if (distance > 0 && paceSeconds) {
+        pace = secondsToHMS(paceSeconds);
+        $('#pace-result2').text(pace);
+      } else {
+        $('#error2').text(pace);
+      }
+    });
+  });
+  </script>
+</html>
